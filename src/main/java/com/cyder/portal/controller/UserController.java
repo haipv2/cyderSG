@@ -8,11 +8,9 @@ import com.cyder.portal.service.UserRoleService;
 import com.cyder.portal.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -40,17 +38,17 @@ public class UserController extends BaseController {
     @Autowired
     MessageSource messageSource;
 
-    @Autowired
-    PersistentTokenBasedRememberMeServices persistentTokenBasedRememberMeServices;
-
-    @Autowired
-    AuthenticationTrustResolver authenticationTrustResolver;
+//    @Autowired
+//    PersistentTokenBasedRememberMeServices persistentTokenBasedRememberMeServices;
+//
+//    @Autowired
+//    AuthenticationTrustResolver authenticationTrustResolver;
 
 
     /**
      * This method will list all existing users.
      */
-    @RequestMapping(value = {"/", "/dashboard-staff"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/dashboard-staff"}, method = RequestMethod.GET)
     public String listUsers(ModelMap model) {
         return "dashboard-staff";
     }
@@ -88,21 +86,17 @@ public class UserController extends BaseController {
      * This method handles login GET requests.
      * If users is already logged-in and tries to goto login page again, will be redirected to list page.
      */
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = {"/","/login"}, method = RequestMethod.GET)
     public String getLoginPage(Model model, @ModelAttribute("userLoginRequest") UserLoginRequest userLoginRequest) {
-        if (isCurrentAuthenticationAnonymous()) {
             model.addAttribute("userLoginRequest", userLoginRequest);
             return "login";
-        } else {
-            return "redirect:/dologin";
-        }
     }
 
     /**
      * This method handles login GET requests.
      * If users is already logged-in and tries to goto login page again, will be redirected to list page.
      */
-    @RequestMapping(value = "/dologin", method = RequestMethod.GET)
+    @RequestMapping(value = "/dologin", method = RequestMethod.POST)
     public String doLoginPage(Model model, @ModelAttribute("userLoginRequest") UserLoginRequest userLoginRequest) {
         model.addAttribute("userLoginRequest", userLoginRequest);
         final User byUserNameAndUserRole = userService.findByUserNameAndUserRole(userLoginRequest.getUserName(), userLoginRequest.getLoginType());
@@ -127,7 +121,7 @@ public class UserController extends BaseController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             //new SecurityContextLogoutHandler().logout(request, response, auth);
-            persistentTokenBasedRememberMeServices.logout(request, response, auth);
+//            persistentTokenBasedRememberMeServices.logout(request, response, auth);
             SecurityContextHolder.getContext().setAuthentication(null);
         }
         return "redirect:/login?logout";
@@ -153,7 +147,7 @@ public class UserController extends BaseController {
      */
     private boolean isCurrentAuthenticationAnonymous() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authenticationTrustResolver.isAnonymous(authentication);
+        return authentication.isAuthenticated();
     }
 
 

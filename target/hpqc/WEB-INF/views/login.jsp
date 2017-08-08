@@ -65,7 +65,7 @@
                         </div>
                     </div>
                     <%--<form name="userLoginRequest" action="dologin" method='GET'>--%>
-                    <form name="userLoginRequest" action="dologin" method='GET'>
+                    <form:form modelAttribute="userLoginRequest" name="userLoginRequest" action="dologin" method='POST'>
                     <input type="hidden" name="${_csrf.parameterName}"
                            value="${_csrf.token}"/>
                     <c:if test="${param.error != null}">
@@ -101,7 +101,7 @@
                             <button type="submit" class="btn" >Sign in! </button>
                         </div>
                     </div>
-                    </form>
+                    </form:form>
 
                 </div>
             </div>
