@@ -3,7 +3,6 @@ package com.cyder.portal.controller;
 import com.cyder.portal.controller.request.UserLoginRequest;
 import com.cyder.portal.entity.User;
 import com.cyder.portal.entity.UserRole;
-import com.cyder.portal.entity.UserRoleType;
 import com.cyder.portal.service.UserRoleService;
 import com.cyder.portal.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,19 +37,20 @@ public class UserController extends BaseController {
     @Autowired
     MessageSource messageSource;
 
-//    @Autowired
-//    PersistentTokenBasedRememberMeServices persistentTokenBasedRememberMeServices;
-//
-//    @Autowired
-//    AuthenticationTrustResolver authenticationTrustResolver;
-
-
     /**
      * This method will list all existing users.
      */
     @RequestMapping(value = {"/dashboard-staff"}, method = RequestMethod.GET)
     public String listUsers(ModelMap model) {
         return "dashboard-staff";
+    }
+
+    /**
+     * This method will list all existing users.
+     */
+    @RequestMapping(value = {"/dashboard-manager"}, method = RequestMethod.GET)
+    public String listManager(ModelMap model) {
+        return "dashboard-manager";
     }
 
     /**
@@ -92,25 +92,25 @@ public class UserController extends BaseController {
             return "login";
     }
 
-    /**
-     * This method handles login GET requests.
-     * If users is already logged-in and tries to goto login page again, will be redirected to list page.
-     */
-    @RequestMapping(value = "/dologin", method = RequestMethod.POST)
-    public String doLoginPage(Model model, @ModelAttribute("userLoginRequest") UserLoginRequest userLoginRequest) {
-        model.addAttribute("userLoginRequest", userLoginRequest);
-        final User byUserNameAndUserRole = userService.findByUserNameAndUserRole(userLoginRequest.getUserName(), userLoginRequest.getLoginType());
-        if (byUserNameAndUserRole == null) {
-            return "redirect:/login?error=User name or password is not correct. ";
-        }
-        if (UserRoleType.USER.getUserRoleType().equals(byUserNameAndUserRole.getType())) {
-            return "dashboard-staff";
-        } else if (UserRoleType.ADMIN.getUserRoleType().equals(byUserNameAndUserRole.getType())) {
-            return "dashboard-manager";
-        } else {
-            return "redirect:/login";
-        }
-    }
+//    /**
+//     * This method handles login GET requests.
+//     * If users is already logged-in and tries to goto login page again, will be redirected to list page.
+//     */
+//    @RequestMapping(value = "/dologin", method = RequestMethod.POST)
+//    public String doLoginPage(Model model, @ModelAttribute("userLoginRequest") UserLoginRequest userLoginRequest) {
+//        model.addAttribute("userLoginRequest", userLoginRequest);
+//        final User byUserNameAndUserRole = userService.findByUserNameAndUserRole(userLoginRequest.getUserName(), userLoginRequest.getLoginType());
+//        if (byUserNameAndUserRole == null) {
+//            return "redirect:/login?error=User name or password is not correct. ";
+//        }
+//        if (UserRoleTypeEnum.USER.getUserRoleType().equals(byUserNameAndUserRole.getType())) {
+//            return "dashboard-staff";
+//        } else if (UserRoleTypeEnum.ADMIN.getUserRoleType().equals(byUserNameAndUserRole.getType())) {
+//            return "dashboard-manager";
+//        } else {
+//            return "redirect:/login";
+//        }
+//    }
 
     /**
      * This method handles logout requests.

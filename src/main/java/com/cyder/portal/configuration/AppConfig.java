@@ -2,6 +2,7 @@ package com.cyder.portal.configuration;
 
 import com.cyder.portal.converter.RoleToUserProfileConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -10,6 +11,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.*;
@@ -25,6 +28,9 @@ public class AppConfig extends WebMvcConfigurerAdapter{
 
 	@Autowired
 	RoleToUserProfileConverter roleToUserProfileConverter;
+	@Autowired
+	@Qualifier("customUserDetailsService")
+	private UserDetailsService userDetailsService;
 
 	/**
      * Configure ViewResolvers to deliver preferred views.
@@ -87,12 +93,12 @@ public class AppConfig extends WebMvcConfigurerAdapter{
 		return new BCryptPasswordEncoder();
 	}
 
-//	@Bean
-//	public DaoAuthenticationProvider authenticationProvider() {
-//		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-//		authenticationProvider.setUserDetailsService(userDetailsService);
-//		authenticationProvider.setPasswordEncoder(passwordEncoder());
-//		return authenticationProvider;
-//	}
+	@Bean
+	public DaoAuthenticationProvider authenticationProvider() {
+		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+		authenticationProvider.setUserDetailsService(userDetailsService);
+		authenticationProvider.setPasswordEncoder(passwordEncoder());
+		return authenticationProvider;
+	}
 }
 

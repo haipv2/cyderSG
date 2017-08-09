@@ -13,7 +13,7 @@ public class UserRole implements Serializable{
 	private Integer userRoleId;
 
 	@Column(name="TYPE", length=15, unique=true, nullable=false)
-	private String type = UserRoleType.USER.getUserRoleType();
+	private String type = UserRoleTypeEnum.USER.getUserRoleType();
 
 	public Integer getUserRoleId() {
 		return userRoleId;
